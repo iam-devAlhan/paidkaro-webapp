@@ -1,0 +1,18 @@
+.nav-link-custom {
+    color: white;
+    text-decoration: none;
+    transition: 0.3s ease-in-out;
+}
+
+.nav-link-custom:hover {
+    text-decoration: underline;
+    text-underline-offset: 10px;
+    text-decoration-thickness: 2px;
+}
+
+@media (max-width: 992px) {
+    .nav-link-custom:hover {
+       text-decoration: none;
+       opacity: 0.8;
+    }
+}
