@@ -17,3 +17,5 @@ npm install
 npm run dev
 ```
 And there you go.. You can work easily..
+
+Remember this App is FARM (FastAPI, React and MySQL) Stack Application
