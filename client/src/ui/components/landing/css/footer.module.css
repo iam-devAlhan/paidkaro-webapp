@@ -4,7 +4,7 @@
     align-items: left;
     justify-content: flex-start;
     flex-direction: column;
-    height: 50vh;
+    height: fit-content;
     background-color: #009E84;
     color: #ffff;
 }

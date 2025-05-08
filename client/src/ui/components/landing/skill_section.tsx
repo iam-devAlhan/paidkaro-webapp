@@ -19,7 +19,7 @@ export default function SkillSection() {
               </div>
             </div>
             <div className="row gap-3">
-              <div className="col mb-5">
+              <div className="col d-flex align-items-center justify-content-center">
                 <img
                   src={softwareEngineering}
                   width={380}
@@ -27,12 +27,12 @@ export default function SkillSection() {
                   id={styles.card}
                 />
               </div>
-              <div className="col">
+              <div className="col d-flex align-items-center justify-content-center">
                 <img src={uiDesign} width={380} height={214} id={styles.card} />
               </div>
             </div>
             <div className="row gap-3 mt-3">
-              <div className="col gap-2">
+              <div className="col gap-2 d-flex align-items-center justify-content-center">
                 <img
                   src={gfxDesign}
                   width={380}
@@ -40,7 +40,7 @@ export default function SkillSection() {
                   id={styles.card}
                 />
               </div>
-              <div className="col">
+              <div className="col d-flex align-items-center justify-content-center">
                 <img
                   src={electronics}
                   width={380}

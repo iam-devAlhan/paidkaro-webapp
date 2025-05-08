@@ -36,8 +36,8 @@ export default function BrandSection() {
               </button>
             </div>
           </div>
-          <div className="d-flex align-items-center justify-content-center">
-            <img src={brandImage} width={500} height={500} />
+          <div id={styles.brandIcon} className="d-flex align-items-center justify-content-center">
+            <img src={brandImage} width={500} height={500} className={styles.brandIcon}/>
           </div>
         </div>
       </section>
