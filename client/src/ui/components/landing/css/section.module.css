@@ -48,3 +48,16 @@
 .box h1 {
     font-size: 3rem;
 }
+
+@media (max-width: 992px) {
+    .brandIcon {
+        display: none;
+    }
+    .section {
+        height: fit-content;
+        margin-bottom: 0;
+    }
+    #card {
+        transform: scale(0.8);
+    }
+}

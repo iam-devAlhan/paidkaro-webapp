@@ -13,7 +13,7 @@ export default function Navbar() {
             <h2>LOGO</h2>
           </a>
           <button
-            className="navbar-toggler"
+            className={`navbar-toggler ${styles["navbar-toggler-custom"]}`}
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navbarSupportedContent"
