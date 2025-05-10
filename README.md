@@ -26,7 +26,7 @@ Remember this App is FARM (FastAPI, React and MySQL) Stack Application
 Note: ERD Diagram updated today 10th May 2025:
 
 ![Screenshot (18)](https://github.com/user-attachments/assets/da4a8b44-81a0-461d-a020-60a1fb6e9ed8)
-
+One Mistake: Add created_at field in Chats Table
 The Mind Map (Flowchart of our application) is given as follows:
 
 
