@@ -23,7 +23,11 @@ Remember this App is FARM (FastAPI, React and MySQL) Stack Application
 
 
 # The ERD Diagram is given as follows.
-Note: It could be updated, the updated ERD Diagram will be updated if possible:
-![Screenshot (14)](https://github.com/user-attachments/assets/307e22bf-8628-4b26-a2f8-98a14d208583)
+Note: ERD Diagram updated today 10th May 2025:
+
+![Screenshot (18)](https://github.com/user-attachments/assets/da4a8b44-81a0-461d-a020-60a1fb6e9ed8)
+
+The Mind Map (Flowchart of our application) is given as follows:
 
 
+![Screenshot (19)](https://github.com/user-attachments/assets/e04663ae-881a-494a-a381-32178d345c61)
