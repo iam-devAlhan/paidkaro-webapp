@@ -1,4 +1,5 @@
 __pycache__
 env
-
+.env
+firebase/paidkaro-app-firebase-adminsdk.json
 
