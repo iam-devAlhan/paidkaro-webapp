@@ -1,10 +1,10 @@
 import './App.css'
 import "bootstrap/dist/css/bootstrap.min.css"
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import LandingPage from './ui/components/landing/landing_page'
+import LandingPage from './UI/components/landing/landing_page'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import AuthComponent from './ui/components/auth/AuthComponent';
-import AuthLoginComponent from './ui/components/auth/AuthLoginComponent';
+import AuthComponent from './UI/components/auth/AuthComponent';
+import AuthLoginComponent from './UI/components/auth/AuthLoginComponent';
 
 function App() {
  

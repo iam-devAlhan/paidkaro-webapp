@@ -1,15 +1,50 @@
 import styles from "../auth/css/authcomponent.module.css";
 import { useRef, useState } from "react";
+import { auth } from "../../../config/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
 export default function AuthComponent() {
+
+  interface User {
+      userName: string
+      userEmail: string
+      profileURL: string
+      password: string
+      confirmPassword: string
+  }
+
   const fileUploadRef = useRef<HTMLInputElement>(null);
+  const new_user: User = {
+      userName: "",
+      userEmail: "",
+      profileURL: "",
+      password: "",
+      confirmPassword: ""
+  }
+  const [user, setUser] = useState(new_user)
 
   const [profile_url, set_profile_url] = useState<string>("");
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      set_profile_url(URL.createObjectURL(file));
+      const fileURL = URL.createObjectURL(file)
+      set_profile_url(fileURL);
+      setUser((prev): any => {
+        return {...prev, profileURL: fileURL}
+      })
+      console.log(user)
     }
+  }
+
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUser((prev): any => {
+      return {...prev, [e.target.name] : e.target.value}
+    })
+  }
+
+  const onSignUpHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
   }
   
   return (
@@ -26,7 +61,10 @@ export default function AuthComponent() {
                       type="text"
                       className={`form-control ${styles.form_field}`}
                       id="floatingInput"
+                      name="userName"
                       placeholder="your username"
+                      value={user.userName}
+                      onChange={onChangeHandler}
                     />
                     <label htmlFor="floatingInput">Username</label>
                     <div className="form-floating mt-2">
@@ -34,7 +72,10 @@ export default function AuthComponent() {
                         type="email"
                         className={`form-control ${styles.form_field}`}
                         id="floatingInput"
+                        name="userEmail"
                         placeholder="youremail@example.com"
+                        value={user.userEmail}
+                        onChange={onChangeHandler}
                       />
                       <label htmlFor="floatingInput">Email Address</label>
                     </div>
@@ -49,6 +90,9 @@ export default function AuthComponent() {
                       className={`form-control ${styles.form_field}`}
                       id="floatingInput"
                       placeholder="Password"
+                      name="password"
+                      value={user.password}
+                      onChange={onChangeHandler}
                     />
                     <label htmlFor="floatingPassword">Create Password</label>
                   </div>
@@ -60,6 +104,9 @@ export default function AuthComponent() {
                       className={`form-control ${styles.form_field}`}
                       id="floatingInput"
                       placeholder="Confirm Password"
+                      name="confirmPassword"
+                      onChange={onChangeHandler}
+                      value={user.confirmPassword}
                     />
                     <label htmlFor="floatingPassword">Retype Password</label>
                   </div>
@@ -100,6 +147,7 @@ export default function AuthComponent() {
                 type="button"
                 className="btn"
                 style={{ backgroundColor: "#009e84", color: "#ffff" }}
+                onClick={onSignUpHandler}
               >
                 Sign Up
               </button>
