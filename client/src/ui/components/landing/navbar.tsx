@@ -1,6 +1,7 @@
 import styles from "../landing/css/navbar.module.css";
-
+import { Link, useNavigate } from "react-router-dom";
 export default function Navbar() {
+  const navigate = useNavigate()
   return (
     <>
       <nav
@@ -43,9 +44,9 @@ export default function Navbar() {
                 </a>
               </li>
               <li className="nav-item">
-                <a className={`nav-link ${styles["nav-link-custom"]}`} href="#">
+                <Link className={`nav-link ${styles["nav-link-custom"]}`} to={"/auth_signup"}>
                   Sign Up
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
                 <a className="nav-link" aria-disabled="true">
@@ -53,6 +54,7 @@ export default function Navbar() {
                     type="button"
                     className="btn btn-light"
                     style={{ color: "#009E84", fontWeight: "bold" }}
+                    onClick={() => navigate("/auth_login")}
                   >
                     Log in
                   </button>
