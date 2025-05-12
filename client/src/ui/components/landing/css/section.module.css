@@ -1,0 +1,63 @@
+.container {
+    display: flex;
+    padding: 5%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10%;
+}
+
+.section {
+    width: 100%;
+    height: 100vh;
+}
+
+.section-two,
+.section-three {
+    width: 100%;
+    height: fit-content;
+}
+
+#card {
+    border-radius: 20px;
+    transition: 0.5s ease-in-out;
+}
+#review {
+    border-radius: 50%;
+}
+.review-card {
+    padding: 2%;
+   
+}
+#card:hover {
+    transform: scale(1.1);
+}
+
+.box {
+    display: flex;
+    padding: 2%;
+    border-radius: 20px;
+    align-items: center;
+    justify-content: center;
+    background-color: #009E84;
+    color: #ffff;
+}
+.heading {
+    color: #009E84;
+}
+.box h1 {
+    font-size: 3rem;
+}
+
+@media (max-width: 992px) {
+    .brandIcon {
+        display: none;
+    }
+    .section {
+        height: fit-content;
+        margin-bottom: 0;
+    }
+    #card {
+        transform: scale(0.8);
+    }
+}
