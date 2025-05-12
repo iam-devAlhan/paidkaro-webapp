@@ -35,5 +35,17 @@ async def create_user_account(payload: UserCreate, db: db_dependency):
 async def verify_login_by_token_validation(payload: UserVerification, db: db_dependency):
     try:
         decoded = firebase_auth.verify_id_token(payload.firebase_token)
+        firebaseID = decoded["uid"]
+        user_email = decoded.get("email")
+        user_name = decoded.get("name")
+        user = db.query(User).filter(User.firebase_uid == firebaseID).first()
+        if not user:
+            return {"message":"User not found!"}
+        
+        return {"message": "Login Successfull", "user" : [{
+            "name" : user.u_name,
+            "email" : user.u_email,
+            "profileURL" : user.profile_picurl
+        }]}
     except:
         raise HTTPException(status_code=401, detail="Invalid Token")
