@@ -1,7 +1,33 @@
 import styles from "../auth/css/authcomponent.module.css";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../config/firebase";
 
 export default function AuthLoginComponent() {
+  interface UserLogin {
+    email: string,
+    password: string
+  }
+
+  const user: UserLogin = {
+    email: "",
+    password: ""
+  }
+  const [loginUser, setLoginUser] = useState(user)
+  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginUser((prev): any => {
+      ({...prev,[event.target.name]: event.target.value})
+    })
+  }
+
+  const signInNormalUser = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, loginUser.email, loginUser.password)
+      console.log(userCredential)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <>
       <main className={`p-5 ${styles.bg}`}>
@@ -12,19 +38,15 @@ export default function AuthLoginComponent() {
               <div className="row">
                 <div className="col">
                   <div className="form-floating">
-                    <input
-                      type="text"
-                      className={`form-control ${styles.form_field}`}
-                      id="floatingInput"
-                      placeholder="your username"
-                    />
-                    <label htmlFor="floatingInput">Username</label>
+                    
                     <div className="form-floating mt-2">
                       <input
                         type="email"
                         className={`form-control ${styles.form_field}`}
                         id="floatingInput"
                         placeholder="youremail@example.com"
+                        value={loginUser.email}
+                        onChange={onChangeHandler}
                       />
                       <label htmlFor="floatingInput">Email Address</label>
                     </div>
@@ -39,6 +61,8 @@ export default function AuthLoginComponent() {
                       className={`form-control ${styles.form_field}`}
                       id="floatingInput"
                       placeholder="Password"
+                      value={loginUser.password}
+                      onChange={onChangeHandler}
                     />
                     <label htmlFor="floatingPassword">Enter Password</label>
                   </div>
@@ -48,6 +72,7 @@ export default function AuthLoginComponent() {
               <button
                 type="button"
                 className="btn"
+                onClick={signInNormalUser}
                 style={{ backgroundColor: "#009e84", color: "#ffff" }}
               >
                 Login
