@@ -1,7 +1,8 @@
-import styles from "../auth/css/authcomponent.module.css";
-import { useRef, useState } from "react";
-import { auth } from "../../../config/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import styles from "../auth/css/authcomponent.module.css"
+import { useRef, useState } from "react"
+import { auth } from "../../../config/firebase"
+import { createUserWithEmailAndPassword, updateProfile} from "firebase/auth"
+import axios from "axios"
 
 export default function AuthComponent() {
 
@@ -33,7 +34,7 @@ export default function AuthComponent() {
       setUser((prev): any => {
         return {...prev, profileURL: fileURL}
       })
-      console.log(user)
+     
     }
   }
 
@@ -43,8 +44,34 @@ export default function AuthComponent() {
     })
   }
 
-  const onSignUpHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onSignUpHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+    if (user.password !== user.confirmPassword) {
+      alert("Passwords don't match")
+      return
+    }
+    setUser(new_user)
+    try {
+      const createUser = await createUserWithEmailAndPassword(auth, user.userEmail, user.confirmPassword)
+      const currentUser = createUser.user
+      await updateProfile(currentUser, {
+        displayName: user.userName
+      })
+      setTimeout(async () => {
+        const authToken = await createUser.user.getIdToken()
+        console.log(authToken)
+        const response = await axios.post("http://localhost:8000/api/v1/auth/signup_token", {
+          firebase_token: authToken
+        })
+        console.log(response.status)
+        console.log(response.data)
+        console.log(createUser)
+      }, 1000)
+    }
+    catch (error) {
+      console.log(error)
+    }
+    
   }
   
   return (
@@ -116,12 +143,13 @@ export default function AuthComponent() {
               <div className="row">
                 <div className="col">
                   <div>
-                    Note: Image should be 800 x 800 px, Preview Image here
+                    Note: Image should be 800 x 800 px
                   </div>
                   <img
                     src={profile_url}
                     width={100}
                     height={100}
+                    alt="Picture Preview"
                     style={{ borderRadius: "50px", marginRight: "10px" }}
                   />
                 </div>

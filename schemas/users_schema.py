@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class UserCreate(BaseModel):
     firebase_token: str
-    profileURL: str
+    # profileURL: str
     
 
 class UserVerification(BaseModel):
