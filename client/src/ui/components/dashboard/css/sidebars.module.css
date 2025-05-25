@@ -1,0 +1,18 @@
+:global(.nav-link.active) {
+    background-color: #009e84 !important;
+}
+
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    transition: transform 0.3s ease;
+    z-index: 1040;
+}
+.closed {
+    width: 0px;
+    display: none;
+}
+.open {
+    display: flex;
+    width: 280px;
+}

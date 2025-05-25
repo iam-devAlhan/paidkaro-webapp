@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.auth_router import router as auth_router
 from database import engine, Base
-
+from models import *
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
