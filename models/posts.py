@@ -14,4 +14,4 @@ class Posts(Base):
     currency = Column(Enum("USD", "PKR", "INR", "EUR"))
     created_at = Column(DateTime)
 
-    user_post = relationship("Users", back_populates="post")
+    user_post = relationship("User", back_populates="post")

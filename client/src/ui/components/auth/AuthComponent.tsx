@@ -3,9 +3,10 @@ import { useRef, useState } from "react"
 import { auth } from "../../../config/firebase"
 import { createUserWithEmailAndPassword, updateProfile} from "firebase/auth"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 export default function AuthComponent() {
-
+  const navigate = useNavigate()
   interface User {
       userName: string
       userEmail: string
@@ -68,21 +69,30 @@ export default function AuthComponent() {
       await updateProfile(currentUser, {
         displayName: user.userName
       })
-      
-
+      await currentUser.reload()
+      console.log(currentUser)
       setTimeout(async () => {
         // Get Firebase JWT Token of the created user
         const authToken = await createUser.user.getIdToken()
+        console.log(authToken)
         // Initialize formdata to send whole user data to backend
         const data = new FormData()
-        const response = await axios.post("http://localhost:8000/api/v1/auth/signup_token", {
-          firebase_token: authToken
+        data.append("firebase_token", authToken)
+        data.append("profile_pic", file)
+        console.log(data)
+        const response = await axios.post("http://localhost:8000/api/v1/auth/signup_user", data , {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
         console.log(response)
-      }, 1000)
+        if (response.data == "User Created Successfully")
+          navigate("/auth_login")
+
+      }, 2000)
     }
-    catch (error) {
-      console.log(error)
+    catch (error: any) {
+      console.log("Signup failed", error.message)
     }
     
   }

@@ -12,5 +12,5 @@ class Organization(Base):
     created_at = Column(DateTime)
     org_leaderid = Column(Integer, ForeignKey("users.u_id"))
 
-    organization_user = relationship("Users", back_populates="organization", uselist=False)
-    org_joined = relationship("OrganizationUsers", back_populates="relevant_organization", uselist=False)
+    organization_user = relationship("User",foreign_keys=[org_leaderid], back_populates="organization")
+    org_joined = relationship("OrganizationUsers", back_populates="relevant_organization")

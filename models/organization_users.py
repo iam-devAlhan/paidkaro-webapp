@@ -12,5 +12,5 @@ class OrganizationUsers(Base):
     status = Column(Enum("Joined", "Fired", "Not Joined"))
     joined_at = Column(DateTime(timezone=True))
 
-    org_joined_user = relationship("Users", back_populates="org_joined_user", uselist=False)
-    relevant_organization = relationship("Organization", back_populates="org_joined", uselist=False)
+    org_joined_user = relationship("User", back_populates="org_joined_user")
+    relevant_organization = relationship("Organization", back_populates="org_joined")

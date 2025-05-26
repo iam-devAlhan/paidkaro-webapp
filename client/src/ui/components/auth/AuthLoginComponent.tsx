@@ -2,6 +2,7 @@ import styles from "../auth/css/authcomponent.module.css";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../config/firebase";
+import axios from "axios";
 
 export default function AuthLoginComponent() {
   interface UserLogin {
@@ -15,15 +16,22 @@ export default function AuthLoginComponent() {
   }
   const [loginUser, setLoginUser] = useState(user)
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLoginUser((prev): any => {
+    setLoginUser((prev): any => 
       ({...prev,[event.target.name]: event.target.value})
-    })
+    )
   }
 
   const signInNormalUser = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, loginUser.email, loginUser.password)
-      console.log(userCredential)
+      setTimeout(async () => {
+        const token = await userCredential.user.getIdToken()
+        await axios.post("http://localhost:8000/api/v1/auth/login_token", {
+          firebase_token: token
+        }).then((res: any) => console.log(res.data)).catch((error: any) => console.log(error.message))
+        setLoginUser(user)
+      }, 2000)
+      
     } catch (error) {
       console.log(error)
     }
@@ -47,6 +55,7 @@ export default function AuthLoginComponent() {
                         placeholder="youremail@example.com"
                         value={loginUser.email}
                         onChange={onChangeHandler}
+                        name="email"
                       />
                       <label htmlFor="floatingInput">Email Address</label>
                     </div>
@@ -63,6 +72,7 @@ export default function AuthLoginComponent() {
                       placeholder="Password"
                       value={loginUser.password}
                       onChange={onChangeHandler}
+                      name="password"
                     />
                     <label htmlFor="floatingPassword">Enter Password</label>
                   </div>

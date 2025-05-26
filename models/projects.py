@@ -13,5 +13,5 @@ class Projects(Base):
     description = Column(Text)
     created_at = Column(DateTime)
 
-    client = relationship("Users", back_populates="project_created_by_user")
+    client = relationship("User", back_populates="project_created_by_user")
     project_proposals = relationship("Proposals", back_populates="project_proposal")

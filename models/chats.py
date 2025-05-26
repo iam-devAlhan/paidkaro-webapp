@@ -13,5 +13,5 @@ class Chats(Base):
     message_type = Column(Enum("Image", "Text", "Video", "Voice"))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
-    sender = relationship("Users", foreign_keys=[sender_id], back_populates="sender_user")
-    receiver = relationship("Users", foreign_keys=[receiver_id], back_populates="receiver_user")
+    sender = relationship("User", foreign_keys=[sender_id], back_populates="sender_user")
+    receiver = relationship("User", foreign_keys=[receiver_id], back_populates="receiver_user")

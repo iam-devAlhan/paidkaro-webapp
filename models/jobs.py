@@ -12,4 +12,4 @@ class Jobs(Base):
     job_type = Column(String(255))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
-    jobs = relationship("Users", back_populates="user_jobs")
+    jobs = relationship("User", back_populates="user_jobs")

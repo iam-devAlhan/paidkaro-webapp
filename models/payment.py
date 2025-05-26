@@ -15,6 +15,6 @@ class Payment(Base):
     pay_status = Column(Enum("Paid","Not Paid"))
     proposal_id = Column(Integer, ForeignKey("proposals.proposals_id"))
 
-    payment_sent = relationship("Users", foreign_keys=[from_id], back_populates="pay_sent")
-    payment_received = relationship("Users", foreign_keys=[to_id], back_populates="pay_received")
+    payment_sent = relationship("User", foreign_keys=[from_id], back_populates="pay_sent")
+    payment_received = relationship("User", foreign_keys=[to_id], back_populates="pay_received")
     proposal_payment = relationship("Proposals", back_populates="proposal_pay")

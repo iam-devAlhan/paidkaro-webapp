@@ -14,6 +14,6 @@ class Proposals(Base):
     created_at = Column(DateTime)
     submitted_at_url = Column(String(255))
 
-    freelancer = relationship("Users", back_populates="freelancer_user", uselist=False)
+    freelancer = relationship("User", back_populates="freelancer_user", uselist=False)
     project_proposal = relationship("Projects", back_populates="project_proposals")
     proposal_pay = relationship("Payment", back_populates="proposal_payment")
