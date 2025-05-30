@@ -1,7 +1,17 @@
+import DashboardContent from "./DashboardContent";
+import DashboardSidebar from "./DashboardSidebar";
 export default function DashboardHome() {
-    return (
-        <>
-            <h1>This is a dashboard page</h1>
-        </>
-    )
+ 
+  return (
+    <>
+      <main className="d-flex flex-row align-items-start justify-content-center" style={{position: "relative"}}>
+       
+        <DashboardSidebar />
+        
+        <div className="container-fluid p-3">
+          <DashboardContent />
+        </div>
+      </main>
+    </>
+  );
 }

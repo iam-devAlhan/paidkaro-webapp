@@ -3,9 +3,10 @@ import { useRef, useState } from "react"
 import { auth } from "../../../config/firebase"
 import { createUserWithEmailAndPassword, updateProfile} from "firebase/auth"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 export default function AuthComponent() {
-
+  const navigate = useNavigate()
   interface User {
       userName: string
       userEmail: string
@@ -46,30 +47,51 @@ export default function AuthComponent() {
 
   const onSignUpHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+    // Step 1: Check user password confirmation
     if (user.password !== user.confirmPassword) {
       alert("Passwords don't match")
       return
     }
+    // Update user state
     setUser(new_user)
     try {
+      // Create user with email and password using firebase
       const createUser = await createUserWithEmailAndPassword(auth, user.userEmail, user.confirmPassword)
+      // Get the created user
       const currentUser = createUser.user
+      // Upload file image and get it using reference
+      const file = fileUploadRef.current?.files?.[0]
+      if (!file) {
+        alert("Please upload your profile image")
+        return
+      }
+      // Update the username with the created profile name to continue
       await updateProfile(currentUser, {
         displayName: user.userName
       })
+      await currentUser.reload()
+      
+      console.log(currentUser)
       setTimeout(async () => {
+        // Get Firebase JWT Token of the created user
         const authToken = await createUser.user.getIdToken()
-        console.log(authToken)
-        const response = await axios.post("http://localhost:8000/api/v1/auth/signup_token", {
-          firebase_token: authToken
+        // Initialize formdata to send whole user data to backend
+        const data = new FormData()
+        data.append("firebase_token", authToken)
+        data.append("profile_pic", file)
+        data.append("user_name", user.userName)
+        const response = await axios.post("http://localhost:8000/api/v1/auth/signup_user", data , {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
-        console.log(response.status)
-        console.log(response.data)
-        console.log(createUser)
-      }, 1000)
+        if (response.data.message == "User Created Successfully")
+          navigate("/auth_login", {replace: true})
+
+      }, 2000)
     }
-    catch (error) {
-      console.log(error)
+    catch (error: any) {
+      console.log("Signup failed", error.message)
     }
     
   }
