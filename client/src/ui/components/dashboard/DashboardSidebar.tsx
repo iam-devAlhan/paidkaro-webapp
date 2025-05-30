@@ -1,30 +1,68 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import styles from "../dashboard/css/sidebars.module.css";
+import { useUserContext } from "../../../context/AuthContext";
+import { signOut } from "firebase/auth";
+import { auth } from "../../../config/firebase";
+import axios from "axios";
 
-type SidebarProps = {
-  isOpen: boolean;
-};
-
-export default function DashboardSidebar({ isOpen }: SidebarProps) {
+export default function DashboardSidebar() {
   const [activeLink, setActiveLink] = useState("jobs"); // Default active page
+  const [isOpen, setIsOpen] = useState(true);
+  const { currentUser } = useUserContext();
+  const [photoUrl, setPhotoUrl] = useState("");
+  const user = currentUser;
+  const navigate = useNavigate();
+  const fetchPhotoUrl = async () => {
+    const res = await axios.get(
+      `http://localhost:8000/api/v1/auth/photo_url/${user?.uid}`
+    );
+    setPhotoUrl(res.data.profile_picurl);
+  };
+  useEffect(() => {
+    if (user?.uid) fetchPhotoUrl();
+  }, [user?.uid]);
 
+  useEffect(() => {
+    if (currentUser === null) {
+      navigate("/auth_login", { replace: true });
+    }
+  }, [currentUser]);
+
+  const signOutHandler = async () => {
+    await signOut(auth);
+  };
   return (
     <>
       <main className="d-flex">
         <div className="b-example-divider b-example-vr"></div>
 
         <div
-          className={`flex-column flex-shrink-0 p-3 bg-body-tertiary ${styles.sidebar} ${
-            isOpen ? styles.open : styles.closed
-          }`}
+          className={`flex-column flex-shrink-0 p-3 bg-body-tertiary ${
+            styles.sidebar
+          } ${isOpen ? styles.open : styles.closed}`}
         >
-          <a
-            href="/home"
-            className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
-          >
-            <span className="fs-4">Home</span>
-          </a>
+          <div className="d-flex flex-row align-items-center justify-content-left">
+            <button
+              type="button"
+              className="btn"
+              style={{
+                width: "fit-content",
+                color: "#009e84",
+                marginTop: "10px",
+                fontSize: "30px",
+              }}
+              onClick={() => setIsOpen((prev): any => !prev)}
+            >
+              <i className="bi bi-caret-left-fill"></i>
+            </button>
+            <Link
+              to={"/home"}
+              className="d-flex align-items-center link-body-emphasis text-decoration-none"
+            >
+              <span className="fs-4">{isOpen ? "Home" : ""}</span>
+            </Link>
+          </div>
 
           <hr />
 
@@ -37,7 +75,8 @@ export default function DashboardSidebar({ isOpen }: SidebarProps) {
                 }`}
                 onClick={() => setActiveLink("jobs")}
               >
-                <i className="bi bi-briefcase"></i>&nbsp; Get Jobs
+                <i className="bi bi-briefcase"></i>&nbsp;{" "}
+                {isOpen ? "Get Jobs" : ""}
               </Link>
             </li>
             <li>
@@ -48,7 +87,8 @@ export default function DashboardSidebar({ isOpen }: SidebarProps) {
                 }`}
                 onClick={() => setActiveLink("dashboard")}
               >
-                <i className="bi bi-speedometer2"></i>&nbsp; Dashboard
+                <i className="bi bi-speedometer2"></i>&nbsp;{" "}
+                {isOpen ? "Dashboard" : ""}
               </Link>
             </li>
             <li>
@@ -59,7 +99,8 @@ export default function DashboardSidebar({ isOpen }: SidebarProps) {
                 }`}
                 onClick={() => setActiveLink("projects")}
               >
-                <i className="bi bi-folder"></i>&nbsp; Create a Project
+                <i className="bi bi-folder"></i>&nbsp;{" "}
+                {isOpen ? "Projects" : ""}
               </Link>
             </li>
             <li>
@@ -70,7 +111,8 @@ export default function DashboardSidebar({ isOpen }: SidebarProps) {
                 }`}
                 onClick={() => setActiveLink("posts")}
               >
-                <i className="bi bi-person-workspace"></i>&nbsp; View Posts
+                <i className="bi bi-person-workspace"></i>&nbsp;{" "}
+                {isOpen ? "View Posts" : ""}
               </Link>
             </li>
             <li>
@@ -81,7 +123,8 @@ export default function DashboardSidebar({ isOpen }: SidebarProps) {
                 }`}
                 onClick={() => setActiveLink("payment")}
               >
-                <i className="bi bi-cash-coin"></i>&nbsp; View Payments
+                <i className="bi bi-cash-coin"></i>&nbsp;{" "}
+                {isOpen ? "Payments" : ""}
               </Link>
             </li>
           </ul>
@@ -96,13 +139,13 @@ export default function DashboardSidebar({ isOpen }: SidebarProps) {
               aria-expanded="false"
             >
               <img
-                src="https://github.com/mdo.png"
-                alt=""
+                src={photoUrl || ""}
+                alt="Photo Url"
                 width="32"
                 height="32"
                 className="rounded-circle me-2"
               />
-              <strong>Profile Name</strong>
+              <strong>{isOpen ? user?.displayName : ""}</strong>
             </a>
             <ul className="dropdown-menu text-small shadow">
               <li>
@@ -119,7 +162,7 @@ export default function DashboardSidebar({ isOpen }: SidebarProps) {
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <a className="dropdown-item" href="#">
+                <a className="dropdown-item" href="#" onClick={signOutHandler}>
                   Sign out
                 </a>
               </li>

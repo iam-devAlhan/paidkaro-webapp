@@ -3,7 +3,7 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 from database import get_db
 from firebase.firebase_config import auth as firebase_auth
-from schemas.users_schema import UserVerification
+from schemas.users_schema import UserInfo, UserVerification, UserDetails
 from cloudinary_config.cloudinary_config import cloudinary
 from models.user import User
 import traceback
@@ -18,15 +18,14 @@ router = APIRouter(
 )
 
 @router.post("/auth/signup_user", status_code=status.HTTP_201_CREATED)
-async def create_user_account(db: db_dependency, firebase_token: str = Form(...), profile_pic: UploadFile = Form(...)):
+async def create_user_account(db: db_dependency, user_name:str = Form(...), firebase_token: str = Form(...), profile_pic: UploadFile = Form(...)):
     try:
         decoded = firebase_auth.verify_id_token(firebase_token)
         firebaseID = decoded["uid"]
         user_email = decoded.get("email")
-        user_name = decoded.get("name")
 
         contents = await profile_pic.read()
-        upload_result = cloudinary_uploader(BytesIO(contents), folder="paidkaro_pics")
+        upload_result = cloudinary_uploader(BytesIO(contents), folder="paidkaro-profile")
         profile_pic_url = upload_result.get("secure_url")
         user = db.query(User).filter(User.firebase_uid == firebaseID).first()
         if not user:
@@ -57,3 +56,13 @@ async def verify_login_by_token_validation(payload: UserVerification, db: db_dep
         }]}
     except:
         raise HTTPException(status_code=401, detail="Invalid Token")
+    
+@router.get("/auth/photo_url/{f_id}", status_code=status.HTTP_200_OK)
+async def get_user_profile_picurl(f_id: str, db: db_dependency):
+    try:
+        user = db.query(User).filter(User.firebase_uid == f_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

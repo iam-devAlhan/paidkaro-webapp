@@ -1,7 +1,7 @@
 from database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, Float, Enum
 from sqlalchemy.orm import relationship
-
+from datetime import datetime, UTC
 class Posts(Base):
     __tablename__ = "posts"
 
@@ -12,6 +12,7 @@ class Posts(Base):
     description = Column(Text)
     budget = Column(Float(decimal_return_scale=2))
     currency = Column(Enum("USD", "PKR", "INR", "EUR"))
-    created_at = Column(DateTime)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    
 
     user_post = relationship("User", back_populates="post")

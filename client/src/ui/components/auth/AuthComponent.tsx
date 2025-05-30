@@ -70,24 +70,23 @@ export default function AuthComponent() {
         displayName: user.userName
       })
       await currentUser.reload()
+      
       console.log(currentUser)
       setTimeout(async () => {
         // Get Firebase JWT Token of the created user
         const authToken = await createUser.user.getIdToken()
-        console.log(authToken)
         // Initialize formdata to send whole user data to backend
         const data = new FormData()
         data.append("firebase_token", authToken)
         data.append("profile_pic", file)
-        console.log(data)
+        data.append("user_name", user.userName)
         const response = await axios.post("http://localhost:8000/api/v1/auth/signup_user", data , {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         })
-        console.log(response)
-        if (response.data == "User Created Successfully")
-          navigate("/auth_login")
+        if (response.data.message == "User Created Successfully")
+          navigate("/auth_login", {replace: true})
 
       }, 2000)
     }

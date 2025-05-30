@@ -6,7 +6,8 @@ export default function Projects() {
   return (
     <>
       <h3>Your Projects</h3>
-      <div className="row row-cols-3">
+      <button type="button" className="btn btn-primary"><i className="bi bi-plus-circle"></i> Create Project</button>
+      <div className="row row-cols-3 mt-4">
         <div className="col">
           <div
             className="card h-100"
