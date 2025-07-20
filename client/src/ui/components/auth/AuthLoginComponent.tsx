@@ -1,7 +1,59 @@
 import styles from "../auth/css/authcomponent.module.css";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../../../config/firebase";
+import axios from "axios";
+import { replace, useNavigate } from "react-router-dom";
 
 export default function AuthLoginComponent() {
+  interface UserLogin {
+    email: string,
+    password: string
+  }
+
+  const user: UserLogin = {
+    email: "",
+    password: ""
+  }
+  const [loginUser, setLoginUser] = useState(user)
+  const navigate = useNavigate()
+  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginUser((prev): any => 
+      ({...prev,[event.target.name]: event.target.value})
+    )
+  }
+
+  const signInNormalUser = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, loginUser.email, loginUser.password)
+      setTimeout(async () => {
+        const token = await userCredential.user.getIdToken()
+        await axios.post("http://localhost:8000/api/v1/auth/login_token", {
+          firebase_token: token
+        }).then(async (res: any) => {
+          if (auth.currentUser) {
+            try {
+              await updateProfile(auth.currentUser, {
+                photoURL: res.data.user.profileURL
+              })
+              await auth.currentUser.reload()
+              console.log(auth.currentUser)
+              alert("Login Successfull")
+              navigate("/home/dashboard")
+            }
+            catch (error) {
+              alert("Login Failed, Try again")
+            }
+          }
+        }  
+        ).catch((error: any) => console.log(error.message))
+        setLoginUser(user)
+      }, 1000)
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <>
       <main className={`p-5 ${styles.bg}`}>
@@ -12,19 +64,16 @@ export default function AuthLoginComponent() {
               <div className="row">
                 <div className="col">
                   <div className="form-floating">
-                    <input
-                      type="text"
-                      className={`form-control ${styles.form_field}`}
-                      id="floatingInput"
-                      placeholder="your username"
-                    />
-                    <label htmlFor="floatingInput">Username</label>
+                    
                     <div className="form-floating mt-2">
                       <input
                         type="email"
                         className={`form-control ${styles.form_field}`}
                         id="floatingInput"
                         placeholder="youremail@example.com"
+                        value={loginUser.email}
+                        onChange={onChangeHandler}
+                        name="email"
                       />
                       <label htmlFor="floatingInput">Email Address</label>
                     </div>
@@ -39,6 +88,9 @@ export default function AuthLoginComponent() {
                       className={`form-control ${styles.form_field}`}
                       id="floatingInput"
                       placeholder="Password"
+                      value={loginUser.password}
+                      onChange={onChangeHandler}
+                      name="password"
                     />
                     <label htmlFor="floatingPassword">Enter Password</label>
                   </div>
@@ -48,6 +100,7 @@ export default function AuthLoginComponent() {
               <button
                 type="button"
                 className="btn"
+                onClick={signInNormalUser}
                 style={{ backgroundColor: "#009e84", color: "#ffff" }}
               >
                 Login

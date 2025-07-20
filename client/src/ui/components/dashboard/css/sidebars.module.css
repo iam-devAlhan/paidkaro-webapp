@@ -1,0 +1,17 @@
+:global(.nav-link.active) {
+    background-color: #009e84 !important;
+}
+
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    transition: width 0.3s ease;
+    z-index: 1040;
+    position: relative;
+}
+.closed {
+    width: 50px;
+}
+.open {
+    width: 280px;
+}
