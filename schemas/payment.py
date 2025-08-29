@@ -1,6 +1,5 @@
-from datetime import datetime, UTC
 from database import Base
-from sqlalchemy import Column, DateTime, Enum, Float, Integer, String, ForeignKey
+from sqlalchemy import Column, DateTime, Enum, Float, Integer, String, ForeignKey, func
 from sqlalchemy.orm import relationship
 
 class Payment(Base):
@@ -9,11 +8,11 @@ class Payment(Base):
     payment_id = Column(Integer, primary_key=True)
     from_id = Column(Integer, ForeignKey("users.u_id"))
     to_id = Column(Integer, ForeignKey("users.u_id"))
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(datetime.UTC))
+    created_at = Column(DateTime, default=func.now())
     amount = Column(Float(decimal_return_scale=2))
     payment_channel = Column(String(255))
-    currency = Column(Enum("USD", "PKR"))
-    pay_status = Column(Enum("Paid","Not Paid"))
+    currency = Column(Enum("USD", "PKR", name="payments_currency_enum"))
+    pay_status = Column(Enum("Paid","Not Paid", name="payment_status_enum"))
     proposal_id = Column(Integer, ForeignKey("proposals.proposals_id"))
 
     payment_sent = relationship("User", foreign_keys=[from_id], back_populates="pay_sent")

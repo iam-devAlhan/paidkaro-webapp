@@ -3,7 +3,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../../config/firebase";
 import axios from "axios";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthLoginComponent() {
   interface UserLogin {

@@ -1,0 +1,7 @@
+.post-image {
+    width: 100%;
+    object-fit: cover;
+}
+.post-card {
+    max-width: 18rem;
+}

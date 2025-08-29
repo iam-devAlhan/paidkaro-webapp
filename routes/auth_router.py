@@ -1,11 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, Form
+from fastapi.responses import JSONResponse
 from typing import Annotated
 from sqlalchemy.orm import Session
 from database import get_db
 from firebase.firebase_config import auth as firebase_auth
-from schemas.users_schema import UserInfo, UserVerification, UserDetails
+from models.users import UserInfo, UserVerification, UserDetails
 from cloudinary_config.cloudinary_config import cloudinary
-from models.user import User
+from schemas.user import User
 import traceback
 from cloudinary.uploader import upload as cloudinary_uploader
 from io import BytesIO
@@ -14,7 +15,7 @@ from io import BytesIO
 db_dependency = Annotated[Session, Depends(get_db)]
 router = APIRouter(
     prefix="/api/v1",
-    tags=["Authentication using Firebase"]
+    tags=["Add user using Firebase Auth Token"]
 )
 
 @router.post("/auth/signup_user", status_code=status.HTTP_201_CREATED)
@@ -49,11 +50,20 @@ async def verify_login_by_token_validation(payload: UserVerification, db: db_dep
         if not user:
             return {"message":"User not found!"}
         
-        return {"message": "Login Successfull", "user" : [{
+        response = JSONResponse({"message": "Login Success!", "user": {
             "name" : user.u_name,
-            "email" : user.u_email,
-            "profileURL" : user.profile_picurl
-        }]}
+            "email": user.u_email,
+            "profileURL": user.profile_picurl
+        }})
+
+        response.set_cookie(
+            key="session",
+            value=firebaseID,
+            secure=True,
+            httponly=True,
+            samesite="strict"
+        )
+        return response
     except:
         raise HTTPException(status_code=401, detail="Invalid Token")
     

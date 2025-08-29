@@ -1,90 +1,95 @@
 import postPlaceholder from "../../../assets/post-image-placeholder.webp";
 import postPlaceholder2 from "../../../assets/post-image-placeholder-2.webp";
 import postPlaceholder3 from "../../../assets/post-placeholder-3.jpg";
+import styles from "./css/posts.module.css";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { auth } from "../../../config/firebase";
 
-
 export default function Posts() {
-  
   interface Post {
-    post_title: string,
-    description: string,
-    budget: string, // for now we are assuming string but for server side we will typecast its value
-    currency: string,
-    post_imgurl: string
+    post_title: string;
+    description: string;
+    budget: string; // for now we are assuming string but for server side we will typecast its value
+    currency: string;
+    post_imgurl: string;
   }
-  
+
   const new_post: Post = {
     post_title: "",
     description: "",
     budget: "",
     currency: "",
-    post_imgurl: ""
-  }
-  const [loading, isLoading] = useState(false)
-  useEffect(()=> {
-    fetchAllPosts()
-  },[])
+    post_imgurl: "",
+  };
+  const [loading, isLoading] = useState(false);
+  useEffect(() => {
+    fetchAllPosts();
+  }, []);
 
-  useEffect(()=> {
-    console.log(posts)
-  }, [])
+  useEffect(() => {
+    console.log(posts);
+  }, []);
   const fetchAllPosts = async () => {
     try {
-      isLoading(true)
-      const res = await axios.get("http://localhost:8000/api/v1/posts/get_all_posts")
-      setPosts(res.data)
+      isLoading(true);
+      const res = await axios.get(
+        "http://localhost:8000/api/v1/posts/get_all_posts"
+      );
+      setPosts(res.data);
       // console.log(res.data)
     } catch (error) {
-      console.log("Failed to get posts")
+      console.log("Failed to get posts");
     } finally {
-      isLoading(false)
+      isLoading(false);
     }
-    
-  }
+  };
 
-  const postImgRef = useRef<HTMLInputElement>(null)
-  const [posts, setPosts] = useState<Array<Post>>([])
-  const [post, setPost] = useState(new_post)
+  const postImgRef = useRef<HTMLInputElement>(null);
+  const [posts, setPosts] = useState<Array<Post>>([]);
+  const [post, setPost] = useState(new_post);
 
   const onFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const fileUrl = URL.createObjectURL(file)
+      const fileUrl = URL.createObjectURL(file);
       setPost((prev: any) => {
-        return {...prev, post_img: fileUrl}
-      })
+        return { ...prev, post_img: fileUrl };
+      });
     }
-  }
-  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      setPost((prev: any) => {
-        return {...prev, [e.target.name] : e.target.value}
-      })
-  }
+  };
+  const onChangeHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setPost((prev: any) => {
+      return { ...prev, [e.target.name]: e.target.value };
+    });
+  };
   const submitHandler = async () => {
-    setPost(new_post)
-    const file = postImgRef.current?.files?.[0]
+    setPost(new_post);
+    const file = postImgRef.current?.files?.[0];
     if (!file) {
-      alert("Please upload post image")
-      return
+      alert("Please upload post image");
+      return;
     }
-    const formdata = new FormData()
-    formdata.append("firebase_id", auth.currentUser?.uid || "")
-    formdata.append("title", post.post_title)
-    formdata.append("post_img", file)
-    formdata.append("description", post.description)
-    formdata.append("budget", post.budget)
-    formdata.append("currency", post.currency)
-    const res = await axios.post("http://localhost:8000/api/v1/posts/create_posts", formdata, {
-      headers: {
-        "Content-Type": "multipart/form-data"
+    const formdata = new FormData();
+    formdata.append("firebase_id", auth.currentUser?.uid || "");
+    formdata.append("title", post.post_title);
+    formdata.append("post_img", file);
+    formdata.append("description", post.description);
+    formdata.append("budget", post.budget);
+    formdata.append("currency", post.currency);
+    await axios.post(
+      "http://localhost:8000/api/v1/posts/create_posts",
+      formdata,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
-    })
-    console.log(res)
-    await fetchAllPosts()
-  }
+    );
+    await fetchAllPosts();
+  };
   return (
     <>
       <h3>Posts</h3>
@@ -198,10 +203,26 @@ export default function Posts() {
                   Upload Image for Post
                 </label>
                 <br />
-                <button type="button" className="btn btn-dark" onClick={() => postImgRef.current?.click()}>Upload File</button>
-                <input type="file" ref={postImgRef} onChange={onFileHandler} style={{display: "none"}}/>
+                <button
+                  type="button"
+                  className="btn btn-dark"
+                  onClick={() => postImgRef.current?.click()}
+                >
+                  Upload File
+                </button>
+                <input
+                  type="file"
+                  ref={postImgRef}
+                  onChange={onFileHandler}
+                  style={{ display: "none" }}
+                />
                 <br />
-                <img src={post.post_imgurl} alt="Preview Image" width={300} height={169} />
+                <img
+                  src={post.post_imgurl}
+                  alt="Preview Image"
+                  width={300}
+                  height={169}
+                />
               </div>
             </div>
             <div className="modal-footer">
@@ -212,7 +233,11 @@ export default function Posts() {
               >
                 Cancel
               </button>
-              <button type="button" className="btn btn-success" onClick={submitHandler}>
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={submitHandler}
+              >
                 Create Post
               </button>
             </div>
@@ -220,17 +245,12 @@ export default function Posts() {
         </div>
       </div>
       {/* Modal ends here and cards display start from here */}
-      <div className="row row-cols-3 mt-4">
-        <div className="col">
-          <div
-            className="card h-100"
-            style={{ width: "18rem", border: "2px solid #009e84" }}
-          >
+      <div className="row g-3 mt-4">
+        <div className="col-12 col-md-4 col-sm-6 col-lg-3">
+          <div className={`card h-100 ${styles["post-card"]}`}>
             <img
               src={postPlaceholder}
-              width={300}
-              height={169}
-              className="card-img-top"
+              className={`card-img-top ${styles["post-image"]}`}
               alt="..."
             />
             <div className="card-body">
@@ -250,16 +270,11 @@ export default function Posts() {
             </div>
           </div>
         </div>
-        <div className="col">
-          <div
-            className="card h-100"
-            style={{ width: "18rem", border: "2px solid #009e84" }}
-          >
+        <div className="col-12 col-md-4 col-sm-6 col-lg-3">
+          <div className={`card h-100 ${styles["post-card"]}`}>
             <img
               src={postPlaceholder2}
-              width={300}
-              height={169}
-              className="card-img-top"
+              className={`card-img-top ${styles["post-image"]}`}
               alt="..."
             />
             <div className="card-body">
@@ -279,16 +294,11 @@ export default function Posts() {
             </div>
           </div>
         </div>
-        <div className="col">
-          <div
-            className="card h-100"
-            style={{ width: "18rem", border: "2px solid #009e84" }}
-          >
+        <div className="col-12 col-md-4 col-sm-6 col-lg-3">
+          <div className={`card h-100 ${styles["post-card"]}`}>
             <img
               src={postPlaceholder3}
-              width={300}
-              height={169}
-              className="card-img-top"
+              className={`card-img-top ${styles["post-image"]}`}
               alt="..."
             />
             <div className="card-body">
@@ -306,44 +316,42 @@ export default function Posts() {
                 Check Post
               </a>
             </div>
-            
           </div>
         </div>
-        {loading ? <div>Loading</div> :  posts.map((post) => {
-          return (
-            <>
-              <div className="col">
-          <div
-            className="card h-100"
-            style={{ width: "18rem", border: "2px solid #009e84" }}
-          >
-            <img
-              src={post.post_imgurl}
-              width={300}
-              height={169}
-              className="card-img-top"
-              alt="..."
-            />
-            <div className="card-body">
-              <h5 className="card-title">{post.post_title}</h5>
-              <p className="card-text">
-                {post.description}
-              </p>
-              <p className="card-text">Price: {post.currency}{post.budget}</p>
-              <a
-                href="#"
-                className="btn"
-                style={{ backgroundColor: "#009e84", color: "#ffff" }}
-              >
-                Check Post
-              </a>
-            </div>
-            
-          </div>
-        </div>
-            </>
-          )
-        })}
+        {loading ? (
+          <div>Loading</div>
+        ) : (
+          posts.map((post) => {
+            return (
+              <>
+                <div className="col-12 col-md-4 col-sm-6 col-lg-3">
+                  <div className={`card h-100 ${styles["post-card"]}`}>
+                    <img
+                      src={post.post_imgurl}
+                      className={`card-img-top ${styles["post-image"]}`}
+                      alt="..."
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">{post.post_title}</h5>
+                      <p className="card-text">{post.description}</p>
+                      <p className="card-text">
+                        Price: {post.currency}
+                        {post.budget}
+                      </p>
+                      <a
+                        href="#"
+                        className="btn"
+                        style={{ backgroundColor: "#009e84", color: "#ffff" }}
+                      >
+                        Check Post
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </>
+            );
+          })
+        )}
       </div>
     </>
   );

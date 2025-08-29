@@ -1,10 +1,10 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
+from sqlalchemy import func, Column, Integer, String, Text, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
-from models.chats import Chats
-from models.payment import Payment
-from models.organization import Organization
+from schemas.chats import Chats
+from schemas.payment import Payment
+from schemas.organization import Organization
 
 class User(Base):
     __tablename__ = "users"
@@ -16,7 +16,7 @@ class User(Base):
     org_joinedid = Column(Integer, ForeignKey("Organization.org_id"))
     profile_picurl = Column(String(255))
     description = Column(Text)
-    created_at = Column(DateTime)
+    created_at = Column(DateTime, default=func.now())
 
     org_joined_user = relationship("OrganizationUsers",  back_populates="org_joined_user", uselist=False)
     organization = relationship("Organization", foreign_keys=[Organization.org_leaderid],back_populates="organization_user", uselist=False)

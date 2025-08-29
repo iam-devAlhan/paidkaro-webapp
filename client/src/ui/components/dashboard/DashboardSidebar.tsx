@@ -34,9 +34,8 @@ export default function DashboardSidebar() {
   };
   return (
     <>
-      <main className="d-flex">
+      <div className="d-flex">
         <div className="b-example-divider b-example-vr"></div>
-
         <div
           className={`flex-column flex-shrink-0 p-3 bg-body-tertiary ${
             styles.sidebar
@@ -77,6 +76,18 @@ export default function DashboardSidebar() {
               >
                 <i className="bi bi-briefcase"></i>&nbsp;{" "}
                 {isOpen ? "Get Jobs" : ""}
+              </Link>
+            </li>
+             <li>
+              <Link
+                to="feeds"
+                className={`nav-link ${
+                  activeLink === "feeds" ? "active" : "link-body-emphasis"
+                }`}
+                onClick={() => setActiveLink("feeds")}
+              >
+                <i className="bi bi-newspaper"></i>&nbsp;{" "}
+                {isOpen ? "Feeds" : ""}
               </Link>
             </li>
             <li>
@@ -139,7 +150,7 @@ export default function DashboardSidebar() {
               aria-expanded="false"
             >
               <img
-                src={photoUrl || ""}
+                src={photoUrl || "..."}
                 alt="Photo Url"
                 width="32"
                 height="32"
@@ -169,7 +180,7 @@ export default function DashboardSidebar() {
             </ul>
           </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }

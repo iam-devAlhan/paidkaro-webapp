@@ -6,9 +6,9 @@ from cloudinary_config.cloudinary_config import cloudinary
 from cloudinary.uploader import upload as cloudinary_uploader
 from io import BytesIO
 
-from models.posts import Posts
-from models.user import User
-from schemas.post_schema import PostOutByUser
+from schemas.posts import Posts
+from schemas.user import User
+from models.posts import PostOutByUser
 
 post_router = APIRouter(
     prefix="/api/v1",

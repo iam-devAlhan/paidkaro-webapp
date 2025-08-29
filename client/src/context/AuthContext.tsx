@@ -1,7 +1,5 @@
-import {
-  onAuthStateChanged,
-  User,
-} from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
+
 import {
   useState,
   useEffect,
@@ -10,7 +8,6 @@ import {
   useContext,
 } from "react";
 import { auth } from "../config/firebase";
-
 
 // Interface for context
 interface AuthContextType {
@@ -22,7 +19,6 @@ export const AuthContext = createContext<AuthContextType>({
   currentUser: null,
 });
 
-// Hook to access context
 export const useUserContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -39,7 +35,6 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
     });
-    
 
     return () => unsubscribe();
   }, []);

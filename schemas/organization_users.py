@@ -1,7 +1,6 @@
 from database import Base
-from sqlalchemy import Column, DateTime, Enum, Integer, String, ForeignKey
+from sqlalchemy import Column, DateTime, Enum, Integer, String, ForeignKey, func
 from sqlalchemy.orm import relationship
-from datetime import datetime, UTC
 class OrganizationUsers(Base):
     __tablename__ = "organization_users"
 
@@ -9,8 +8,8 @@ class OrganizationUsers(Base):
     org_name = Column(String(50))
     user_id = Column(Integer, ForeignKey("users.u_id"))
     org_id = Column(Integer, ForeignKey("Organization.org_id"))
-    status = Column(Enum("Joined", "Fired", "Not Joined"))
-    joined_at = Column(DateTime(timezone=True))
+    status = Column(Enum("Joined", "Fired", "Not Joined", name="organizations_status_enum"))
+    joined_at = Column(DateTime, default=func.now())
 
     org_joined_user = relationship("User", back_populates="org_joined_user")
     relevant_organization = relationship("Organization", back_populates="org_joined")
