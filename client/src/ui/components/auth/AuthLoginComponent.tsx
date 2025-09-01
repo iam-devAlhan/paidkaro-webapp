@@ -1,11 +1,12 @@
-import styles from "../auth/css/authcomponent.module.css";
 import { useState } from "react";
-import { signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../config/firebase";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import styles from "../auth/css/authcomponent.module.css";
+import axios from "axios";
 
 export default function AuthLoginComponent() {
+
   interface UserLogin {
     email: string,
     password: string
@@ -15,8 +16,11 @@ export default function AuthLoginComponent() {
     email: "",
     password: ""
   }
+
   const [loginUser, setLoginUser] = useState(user)
+
   const navigate = useNavigate()
+  
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLoginUser((prev): any => 
       ({...prev,[event.target.name]: event.target.value})
@@ -30,16 +34,14 @@ export default function AuthLoginComponent() {
         const token = await userCredential.user.getIdToken()
         await axios.post("http://localhost:8000/api/v1/auth/login_token", {
           firebase_token: token
+        }, {
+          withCredentials: true
         }).then(async (res: any) => {
           if (auth.currentUser) {
             try {
-              await updateProfile(auth.currentUser, {
-                photoURL: res.data.user.profileURL
-              })
-              await auth.currentUser.reload()
-              console.log(auth.currentUser)
-              alert("Login Successfull")
-              navigate("/home/dashboard")
+              console.log(res)
+              alert("Login Success!!")
+              navigate("/dashboard/home/jobs")
             }
             catch (error) {
               alert("Login Failed, Try again")

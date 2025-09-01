@@ -8,29 +8,29 @@ import axios from "axios";
 
 export default function DashboardSidebar() {
   const [activeLink, setActiveLink] = useState("jobs"); // Default active page
+  const toNavigate = useNavigate()
   const [isOpen, setIsOpen] = useState(true);
   const { currentUser } = useUserContext();
   const [photoUrl, setPhotoUrl] = useState("");
   const user = currentUser;
-  const navigate = useNavigate();
   const fetchPhotoUrl = async () => {
     const res = await axios.get(
-      `http://localhost:8000/api/v1/auth/photo_url/${user?.uid}`
+      `http://localhost:8000/api/v1/auth/photo_url/`,
+      {
+        withCredentials: true
+      }
     );
+    if (res.data?.message === "User not Authenticated!") toNavigate("/auth_login", { replace : true })
     setPhotoUrl(res.data.profile_picurl);
   };
   useEffect(() => {
     if (user?.uid) fetchPhotoUrl();
   }, [user?.uid]);
 
-  useEffect(() => {
-    if (currentUser === null) {
-      navigate("/auth_login", { replace: true });
-    }
-  }, [currentUser]);
-
+  
   const signOutHandler = async () => {
     await signOut(auth);
+    if (!currentUser) toNavigate("/auth_login", { replace: true })
   };
   return (
     <>
@@ -78,7 +78,8 @@ export default function DashboardSidebar() {
                 {isOpen ? "Get Jobs" : ""}
               </Link>
             </li>
-             <li>
+            {/* Future features to be added, Code commented out for safety */}
+             {/* <li>
               <Link
                 to="feeds"
                 className={`nav-link ${
@@ -92,16 +93,16 @@ export default function DashboardSidebar() {
             </li>
             <li>
               <Link
-                to="dashboard"
+                to="analytics"
                 className={`nav-link ${
-                  activeLink === "dashboard" ? "active" : "link-body-emphasis"
+                  activeLink === "analytics" ? "active" : "link-body-emphasis"
                 }`}
-                onClick={() => setActiveLink("dashboard")}
+                onClick={() => setActiveLink("analytics")}
               >
                 <i className="bi bi-speedometer2"></i>&nbsp;{" "}
                 {isOpen ? "Dashboard" : ""}
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 to="projects"
