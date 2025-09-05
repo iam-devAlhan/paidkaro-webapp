@@ -12,7 +12,6 @@ class Proposals(Base):
     bid_amount = Column(Numeric(10, 2))
     status = Column(Enum("Accepted", "Not Accepted", "Pending", name="proposals_status"))
     created_at = Column(DateTime, default=func.now())
-    submitted_at_url = Column(String(255))
 
     freelancer = relationship("User", back_populates="freelancer_user", uselist=False)
     project_proposal = relationship("Projects", back_populates="project_proposals")

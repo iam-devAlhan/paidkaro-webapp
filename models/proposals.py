@@ -17,3 +17,8 @@ class ProjectProposals(BaseModel):
 
     class Config:
         from_attributes = True
+
+class CreateProposal(BaseModel):
+    description: str
+    bid_amount: float
+    status: str

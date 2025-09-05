@@ -4,6 +4,7 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 from database import get_db
 from firebase.firebase_config import auth as firebase_auth
+
 from models.users import UserVerification, UserDetails
 from cloudinary_config.cloudinary_config import cloudinary
 from schemas.user import User
@@ -11,6 +12,8 @@ import traceback
 from cloudinary.uploader import upload as cloudinary_uploader
 from io import BytesIO
 
+from firebase_admin._auth_utils import InvalidIdTokenError
+from sqlalchemy.exc import SQLAlchemyError
 
 db_dependency = Annotated[Session, Depends(get_db)]
 router = APIRouter(
@@ -37,9 +40,11 @@ async def create_user_account(db: db_dependency, user_name:str = Form(...), fire
             return {"message":"User Created Successfully"}
         else:
             raise HTTPException(status_code=400, detail="User already exists")
+    except InvalidIdTokenError as e:
+        raise HTTPException(status_code=401, detail="Invalid Token")
     except:
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="Invalid Token or Backend Server Problem")
+        raise HTTPException(status_code=401, detail="Server Problem")
     
 @router.post("/auth/login_token", status_code=status.HTTP_200_OK)
 async def verify_login_by_token_validation(payload: UserVerification, db: db_dependency):
@@ -56,7 +61,7 @@ async def verify_login_by_token_validation(payload: UserVerification, db: db_dep
         }})
 
         response.set_cookie(
-            key="session",
+            key="firebase_uid",
             value=firebaseID,
             secure=False,
             httponly=True,
@@ -64,18 +69,20 @@ async def verify_login_by_token_validation(payload: UserVerification, db: db_dep
         )
         return response
     except:
-        raise HTTPException(status_code=401, detail="Invalid Token")
+        raise HTTPException(status_code=401, detail="Verification Failed!")
     
 @router.get("/auth/photo_url/", status_code=status.HTTP_200_OK, response_model=UserDetails)
-async def get_user_profile_picurl(db: db_dependency, session: Annotated[str | None, Cookie()] = None):
+async def get_user_profile_picurl(db: db_dependency, firebase_uid: Annotated[str | None, Cookie()] = None):
     try:
-        if not session:
+        if not firebase_uid:
             raise HTTPException(status_code=404, detail="User not authenticated!")
-        
-        user = db.query(User).filter(User.firebase_uid == session).first()
+        user = db.query(User).filter(User.firebase_uid == firebase_uid).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return UserDetails(u_id=user.u_id, u_name=user.u_name, profile_picurl=user.profile_picurl)
+    except SQLAlchemyError as sqle:
+        db.rollback()
+        raise HTTPException(status_code=401, detail="Database Error!")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=401, detail=str(e))
     

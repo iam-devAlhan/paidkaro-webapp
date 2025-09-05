@@ -30,7 +30,7 @@ async def create_posts(db: db_dependency, firebase_id:str = Form(...), title: st
         db.add(new_post)
         db.commit()
         db.refresh(new_post)
-        print(new_post)
+        # print(new_post)
         return {"message": "Post created successfully"}
 
     except Exception as e:
